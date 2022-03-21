@@ -23,11 +23,9 @@ const App = () => {
   const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0))
 
   const nextBtn = () => {
-    if(selected === (anecdotes.length-1)){
-      setSelected(0)
-    }
-    else{
-      setSelected(selected + 1)
+    let newSelected = selected
+    if (newSelected === selected){
+      setSelected(Math.floor(Math.random() * anecdotes.length))
     }
   }
 
