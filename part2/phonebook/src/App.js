@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import PhoneForm from "./components/PhoneForm";
 import ContactList from "./components/ContactList";
 import SearchForm from "./components/SearchForm"
 
 const App = (props) => {
-  const [phoneBook, setPhoneBook] = useState(props.phoneBook)
+  const [phoneBook, setPhoneBook] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [search, setSearch] = useState('')
@@ -13,6 +14,17 @@ const App = (props) => {
   ? phoneBook
   : phoneBook.filter((phone) => 
   (phone.name.toLowerCase().includes(search.toLowerCase())))
+
+  const hook = () =>{
+    console.log("EffecT!")
+    axios
+    .get("http://localhost:3001/persons")
+    .then((response)=>{
+      setPhoneBook(response.data)
+    })
+  }
+  
+  useEffect(hook, [])
 
   const addPhoneNumber = (event) => {
     event.preventDefault()
