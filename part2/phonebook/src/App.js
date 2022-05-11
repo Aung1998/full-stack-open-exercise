@@ -3,6 +3,8 @@ import phonesService from './services/phonebook'
 import PhoneForm from "./components/PhoneForm";
 import ContactList from "./components/ContactList";
 import SearchForm from "./components/SearchForm"
+import Notification from "./components/Notifaction";
+import './index.css'
 
 const App = () => {
   const [phoneBook, setPhoneBook] = useState([])
@@ -10,6 +12,8 @@ const App = () => {
   const [newPhone, setNewPhone] = useState('')
   const [search, setSearch] = useState('')
   const [IDs, setIDs] = useState([])
+  const [notifactionMessage, setNotifactionMessage] = useState(null)
+  const [color, setColor] = useState({})
 
   const phoneBooktoShow = search === ''
   ? phoneBook
@@ -49,8 +53,17 @@ const App = () => {
             number: newPhone,
             id:id,
           }
-          phonesService.update(id, updateObject).then(response => {
+          phonesService
+          .update(id, updateObject)
+          .then(response => {
             setPhoneBook(phoneBook.map(phone => phone.id !==id ? phone:response))
+          })
+          .catch (error => {
+            setNotifactionMessage(`The Information of ${updateObject.name} has been deleted!`)
+            setColor({
+              color: 'red'
+            })
+            setTimeout(() => setNotifactionMessage(null), 5000)
           })
       }
       return
@@ -61,6 +74,11 @@ const App = () => {
       setIDs(IDs.concat(newPhoneObject.id))
       setNewPhone('')
       setNewName('')
+      setNotifactionMessage(`The phone number has successfully added!`)
+        setColor({
+          color: 'green'
+        })
+        setTimeout(() => setNotifactionMessage(null), 5000)
     }
   }
 
@@ -84,11 +102,19 @@ const App = () => {
         setPhoneBook(phoneBook.filter(phone => phone.id != id))
         setIDs(IDs.filter(phone_id => phone_id != id))
       })
-    }
+      .catch (error => {
+        setNotifactionMessage(`The Information has  already been deleted!`)
+        setColor({
+          color: 'red'
+        })
+        setTimeout(() => setNotifactionMessage(null), 5000)
+    })
   }
+}
 
   return (
     <div>
+      <Notification message={notifactionMessage} color={color}/>
       <SearchForm value={search} onChange={handleSearch}/>
       <PhoneForm onSubmitHandler={addPhoneNumber} 
       nameValue={newName} onNameChangeHandler={handleNameChange} 
